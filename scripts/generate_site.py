@@ -1,14 +1,63 @@
 #!/usr/bin/env python3
 """Generate all Ras Raaga static HTML pages (50–55). Run once; no build step at deploy."""
 from pathlib import Path
+import json
 
 ROOT = Path(__file__).resolve().parent.parent
 TICKET = "https://buytickets.at/rasraaga/2311367"
 IG = "https://www.instagram.com/rasraaga/"
 EVENT_DATE = "30th August 2026"
 VENUE = "585 Mowry Ave, Fremont, CA 94536"
-SITE_NAME = "Ras Raaga – Bhajan Clubbing"
+VENUE_NAME = "Event Venue"
+CITY = "Fremont, CA"
+SITE_NAME = "Ras Raaga"
+SITE_TAGLINE = "Cultural & Community Events"
 SITE_BASE = "https://deploymentplatform.github.io/RASRAGA"
+ADMIN_EMAIL = "hello@rasraaga.com"
+
+# Upcoming / current events — event-specific details live on individual event pages only.
+EVENTS = [
+    {
+        "slug": "bhajan-clubbing",
+        "title": "Bhajan Clubbing with Ras Raaga",
+        "short_desc": "An evening of live bhajans, community celebration, youth and family participation, and meaningful connection in Fremont.",
+        "date": EVENT_DATE,
+        "time": "Doors 4:00 PM · Program 5:00–8:00 PM",
+        "doors": "4:00 PM",
+        "program": "5:00 PM – 8:00 PM",
+        "venue_name": VENUE_NAME,
+        "venue": VENUE,
+        "city": CITY,
+        "ticket_url": TICKET,
+        "ticket_price_label": None,  # Pricing shown only via official ticketing — do not invent prices
+        "artists": "BayRaagis (Live)",
+        "image_label": "♪",
+        "published": True,
+        "timezone": "America/Los_Angeles",
+        # Program start/end in event timezone (ISO 8601 with offset)
+        "start_at": "2026-08-30T17:00:00-07:00",
+        "end_at": "2026-08-30T20:00:00-07:00",
+        "highlights": [
+            "Live bhajan performances with BayRaagis",
+            "Family-friendly and youth-welcoming atmosphere",
+            "Community celebration with sacred joy",
+            "Food and beverages available from participating vendors",
+            "Opportunities for sponsors and restaurant partners",
+        ],
+        "performances": "Live bhajan sessions featuring BayRaagis — call-and-response energy, classic repertoire, and moments of collective bliss from welcome through closing blessings.",
+        "youth_family": "Children and youth are welcome with parental supervision. The evening is designed for families, first-timers, and longtime devotees alike — a warm space to clap, sing, sway, or simply receive.",
+        "food_info": "Where applicable, the ticketing system may offer an optional ticket package with a food credit or food add-on — see the official ticket page for current options.",
+        "ticket_categories_note": "Ticket categories and exact pricing are listed on the official ticketing platform. Example category types may include Youth Admission (Below 18 Years), General Admission, and Admission with Food Credit when offered. Do not rely on this site for prices — always confirm at checkout.",
+        "instructions": [
+            "Purchase tickets only through the official link on this page.",
+            "Arrive by doors at 4:00 PM for a settled start.",
+            "Phones on silent; capture memories respectfully.",
+            "Follow volunteer and venue instructions for safety.",
+            "Food is purchased separately unless you select a food-credit package at ticketing.",
+        ],
+        "contact_note": f"Questions about this event? Email {ADMIN_EMAIL} or use our Contact page. For ticket issues, check Ticket FAQs and your confirmation email first.",
+    },
+]
 
 SPONSORS = [
     ("hashtag-india", "Hashtag India", "Indian Authentic Food", "Celebrating authentic Indian flavors that nourish body and soul."),
@@ -18,6 +67,22 @@ SPONSORS = [
     ("chaat-bhavan", "Chaat Bhavan", "Indian Street Food", "Beloved Bay Area chaat and comfort food with heartfelt hospitality."),
     ("mantra-india", "Mantra India", "Lifestyle & Culture", "Bringing Indian lifestyle, culture, and mindful living to the community."),
     ("forsys", "Forsys", "Enterprise Solutions", "Innovation and excellence — proudly supporting spiritual community events."),
+]
+
+# Placeholder sponsorship matrix — client will provide final packages, prices, and benefits.
+SPONSOR_LEVELS = ("Silver Sponsor", "Gold Sponsor", "Platinum Sponsor", "Presenting Sponsor")
+SPONSOR_BENEFITS = [
+    ("Logo placement on the website", "✓", "✓", "✓", "✓"),
+    ("Social media promotion", "✓", "✓", "✓", "✓"),
+    ("Event flyer visibility", "—", "✓", "✓", "✓"),
+    ("Stage acknowledgement", "—", "✓", "✓", "✓"),
+    ("Vendor or promotional booth", "—", "—", "✓", "✓"),
+    ("Event banner placement", "—", "—", "✓", "✓"),
+    ("Promotional video mentions", "—", "—", "✓", "✓"),
+    ("Email or community promotions", "—", "—", "—", "✓"),
+    ("Complimentary passes", "Placeholder", "Placeholder", "Placeholder", "Placeholder"),
+    ("On-stage brand recognition", "—", "—", "✓", "✓"),
+    ("Investment / package price", "TBD*", "TBD*", "TBD*", "TBD*"),
 ]
 
 BLOGS = [
@@ -77,41 +142,27 @@ def nav_html(p: str) -> str:
     <div class="dropdown" role="menu">
       <a href="{p}about/index.html">About Ras Raaga</a>
       <a href="{p}about/vision-mission.html">Our Vision &amp; Mission</a>
-      <a href="{p}about/story.html">Story Behind Bhajan Clubbing</a>
+      <a href="{p}about/story.html">Our Story</a>
     </div>
   </div>
   <div class="nav-item">
-    <a class="nav-link" href="{p}event/overview.html">The Event <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg></a>
+    <a class="nav-link" href="{p}events/index.html">Upcoming Events <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg></a>
     <div class="dropdown" role="menu">
-      <a href="{p}event/overview.html">Event Overview</a>
-      <a href="{p}event/schedule.html">Full Program Schedule</a>
+      <a href="{p}events/index.html">All Upcoming Events</a>
+      <a href="{p}events/bhajan-clubbing.html">Bhajan Clubbing</a>
+      <a href="{p}event/schedule.html">Program Schedule</a>
       <a href="{p}event/venue.html">Venue &amp; Directions</a>
-      <a href="{p}event/what-to-expect.html">What to Expect</a>
-      <a href="{p}event/dress-code.html">Dress Code &amp; Guidelines</a>
-    </div>
-  </div>
-  <div class="nav-item"><a class="nav-link" href="{p}artists/index.html">Artists</a></div>
-  <div class="nav-item">
-    <a class="nav-link" href="{p}tickets/book.html">Tickets <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg></a>
-    <div class="dropdown" role="menu">
       <a href="{p}tickets/book.html">Book Tickets</a>
-      <a href="{p}tickets/faqs.html">Ticket FAQs</a>
-      <a href="{p}tickets/group-booking.html">Group Booking</a>
     </div>
   </div>
-  <div class="nav-item nav-item--end">
-    <a class="nav-link" href="{p}sponsors/index.html">Sponsors <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg></a>
+  <div class="nav-item">
+    <a class="nav-link" href="{p}sponsorship.html">Sponsorship <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg></a>
     <div class="dropdown" role="menu">
-      <a href="{p}sponsors/index.html">All Sponsors</a>
-      <a href="{p}sponsors/hashtag-india.html">Hashtag India</a>
-      <a href="{p}sponsors/kumar-jewelers.html">Kumar Jewelers</a>
-      <a href="{p}sponsors/instaservice.html">InstaService.com</a>
-      <a href="{p}sponsors/bharat-puja.html">Bharat Puja &amp; Gifts</a>
-      <a href="{p}sponsors/chaat-bhavan.html">Chaat Bhavan</a>
-      <a href="{p}sponsors/mantra-india.html">Mantra India</a>
-      <a href="{p}sponsors/forsys.html">Forsys</a>
+      <a href="{p}sponsorship.html">Become a Sponsor</a>
+      <a href="{p}sponsors/index.html">Current Partners</a>
     </div>
   </div>
+  <div class="nav-item"><a class="nav-link" href="{p}feedback.html">Feedback</a></div>
   <div class="nav-item nav-item--end">
     <a class="nav-link" href="{p}gallery/photos.html">Gallery <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg></a>
     <div class="dropdown" role="menu">
@@ -127,6 +178,7 @@ def nav_html(p: str) -> str:
       <a href="{p}community/join.html">Join the Family</a>
       <a href="{p}community/volunteer.html">Volunteer</a>
       <a href="{p}community/testimonials.html">Testimonials</a>
+      <a href="{p}artists/index.html">Artists</a>
     </div>
   </div>
   <div class="nav-item"><a class="nav-link" href="{p}contact.html">Contact</a></div>
@@ -137,24 +189,19 @@ def mobile_nav(p: str) -> str:
     return f"""
 <div class="mobile-nav" id="mobile-nav" hidden aria-label="Mobile navigation">
   <a href="{p}index.html">Home</a>
-  <a href="{p}about/index.html">About Ras Raaga</a>
+  <a href="{p}about/index.html">About</a>
   <a class="sub" href="{p}about/vision-mission.html">Vision &amp; Mission</a>
-  <a class="sub" href="{p}about/story.html">Story of Bhajan Clubbing</a>
-  <a href="{p}event/overview.html">The Event</a>
-  <a class="sub" href="{p}event/schedule.html">Schedule</a>
-  <a class="sub" href="{p}event/venue.html">Venue</a>
-  <a class="sub" href="{p}event/what-to-expect.html">What to Expect</a>
-  <a class="sub" href="{p}event/dress-code.html">Dress Code</a>
-  <a href="{p}artists/index.html">Artists – BayRaagis</a>
-  <a href="{p}tickets/book.html">Book Tickets</a>
-  <a class="sub" href="{p}tickets/faqs.html">Ticket FAQs</a>
-  <a class="sub" href="{p}tickets/group-booking.html">Group Booking</a>
-  <a href="{p}sponsors/index.html">Sponsors</a>
+  <a class="sub" href="{p}about/story.html">Our Story</a>
+  <a href="{p}events/index.html">Upcoming Events</a>
+  <a class="sub" href="{p}events/bhajan-clubbing.html">Bhajan Clubbing</a>
+  <a class="sub" href="{p}tickets/book.html">Book Tickets</a>
+  <a href="{p}sponsorship.html">Sponsorship</a>
+  <a class="sub" href="{p}sponsors/index.html">Current Partners</a>
+  <a href="{p}feedback.html">Feedback</a>
   <a href="{p}gallery/photos.html">Gallery</a>
   <a href="{p}blog/index.html">Blog</a>
   <a href="{p}community/join.html">Community</a>
   <a href="{p}faq.html">FAQ</a>
-  <a href="{p}spiritual-resources.html">Spiritual Resources</a>
   <a href="{p}contact.html">Contact</a>
   <a class="btn btn-gold" href="{TICKET}" target="_blank" rel="noopener">Book Tickets</a>
 </div>"""
@@ -167,7 +214,7 @@ def header(p: str) -> str:
   <div class="container header-inner">
     <a class="logo-link" href="{p}index.html" aria-label="Ras Raaga Home">
       <img class="logo-img" src="{p}assets/images/logo.png" alt="Ras Raaga logo" width="56" height="70" decoding="async" />
-      <div class="logo-text">Ras Raaga<span>Bhajan Clubbing</span></div>
+      <div class="logo-text">Ras Raaga<span>{SITE_TAGLINE}</span></div>
     </a>
     {nav_html(p)}
     <div class="header-actions">
@@ -191,7 +238,7 @@ def footer(p: str) -> str:
   <div class="container footer-grid">
     <div class="footer-brand">
       <img class="logo-img" src="{p}assets/images/logo-gold.png" alt="Ras Raaga" width="72" height="90" loading="lazy" decoding="async" />
-      <p>Bhajan Clubbing with Ras Raaga — an evening of bhajans, bliss &amp; beyond. Join us in Fremont on {EVENT_DATE}.</p>
+      <p>Ras Raaga conducts and promotes cultural, community, youth, and family events — performances, activities, food experiences, and meaningful connection.</p>
       <div class="social-links mt-2" aria-label="Social media">
         <a href="{IG}" target="_blank" rel="noopener" aria-label="Instagram @rasraaga">IG</a>
       </div>
@@ -199,10 +246,10 @@ def footer(p: str) -> str:
     <div>
       <h4>Quick Links</h4>
       <ul class="footer-links">
-        <li><a href="{p}event/overview.html">Event Overview</a></li>
-        <li><a href="{p}event/schedule.html">Schedule</a></li>
+        <li><a href="{p}events/index.html">Upcoming Events</a></li>
+        <li><a href="{p}sponsorship.html">Sponsorship</a></li>
+        <li><a href="{p}feedback.html">Feedback</a></li>
         <li><a href="{p}tickets/book.html">Tickets</a></li>
-        <li><a href="{p}artists/index.html">BayRaagis</a></li>
         <li><a href="{p}blog/index.html">Blog</a></li>
         <li><a href="{p}faq.html">FAQ</a></li>
       </ul>
@@ -213,24 +260,23 @@ def footer(p: str) -> str:
     </div>
     <div>
       <h4>Stay Connected</h4>
-      <p style="font-size:0.9rem;margin:0">Newsletter — gentle reminders of devotion &amp; event updates.</p>
+      <p style="font-size:0.9rem;margin:0">Newsletter — event updates and community news.</p>
       <form class="newsletter-form" data-newsletter data-base="{p}" action="{p}newsletter-thank-you.html" method="get">
         <label class="sr-only" for="nl-email">Email</label>
         <input id="nl-email" name="email" type="email" required placeholder="Your email" autocomplete="email" />
         <button class="btn btn-gold" type="submit">Join</button>
       </form>
-      <p class="mt-2" style="font-size:0.85rem">{VENUE}<br/>Doors 4:00 PM · Program 5:00–8:00 PM</p>
+      <p class="mt-2" style="font-size:0.85rem"><a href="{p}contact.html" style="color:var(--gold-light)">Contact the team</a> · <a href="{IG}" style="color:var(--gold-light)" target="_blank" rel="noopener">@rasraaga</a></p>
     </div>
   </div>
   <div class="container footer-bottom">
-    <p class="mb-0">© 2026 Ras Raaga. All rights reserved. Om Shanti.</p>
+    <p class="mb-0">© 2026 Ras Raaga. All rights reserved.</p>
     <p class="mb-0">
       <a href="{p}legal/privacy.html">Privacy</a> ·
       <a href="{p}legal/terms.html">Terms</a> ·
       <a href="{p}legal/refund.html">Refunds</a> ·
       <a href="{p}media-kit.html">Media Kit</a> ·
-      <a href="{p}spiritual-resources.html">Resources</a> ·
-      <a href="{p}sponsors/index.html">Partner With Us</a>
+      <a href="{p}sponsorship.html">Partner With Us</a>
     </p>
   </div>
 </footer>
@@ -238,11 +284,20 @@ def footer(p: str) -> str:
 """
 
 
-def shell(rel_path: str, title: str, description: str, body: str, og_type: str = "website") -> str:
+def shell(rel_path: str, title: str, description: str, body: str, og_type: str = "website", extra_json_ld: str = "") -> str:
     p = depth_prefix(rel_path)
-    full_title = f"{title} | {SITE_NAME}" if title != SITE_NAME else title
+    full_title = f"{title} | {SITE_NAME}" if title != SITE_NAME else f"{SITE_NAME} – {SITE_TAGLINE}"
     canonical = f"{SITE_BASE}/" if rel_path == "index.html" else f"{SITE_BASE}/{rel_path}"
     og_image = f"{SITE_BASE}/assets/images/logo-on-black.png"
+    json_ld = extra_json_ld or f"""{{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Ras Raaga",
+    "url": "{SITE_BASE}/",
+    "logo": "{og_image}",
+    "sameAs": ["{IG}"],
+    "description": "Ras Raaga conducts and promotes cultural, community, youth, and family events across the Bay Area."
+  }}"""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -287,44 +342,7 @@ def shell(rel_path: str, title: str, description: str, body: str, og_type: str =
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link rel="stylesheet" href="{p}assets/css/main.css" />
   <script type="application/ld+json">
-  {{
-    "@context": "https://schema.org",
-    "@type": "MusicEvent",
-    "name": "Bhajan Clubbing with Ras Raaga",
-    "startDate": "2026-08-30T17:00:00-07:00",
-    "endDate": "2026-08-30T20:00:00-07:00",
-    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-    "eventStatus": "https://schema.org/EventScheduled",
-    "location": {{
-      "@type": "Place",
-      "name": "Ras Raaga Venue",
-      "address": {{
-        "@type": "PostalAddress",
-        "streetAddress": "585 Mowry Ave",
-        "addressLocality": "Fremont",
-        "addressRegion": "CA",
-        "postalCode": "94536",
-        "addressCountry": "US"
-      }}
-    }},
-    "image": ["{og_image}"],
-    "description": "An evening of bhajans, bliss & beyond with BayRaagis live.",
-    "organizer": {{
-      "@type": "Organization",
-      "name": "Ras Raaga",
-      "url": "{SITE_BASE}/"
-    }},
-    "offers": {{
-      "@type": "Offer",
-      "url": "{TICKET}",
-      "availability": "https://schema.org/InStock",
-      "validFrom": "2026-01-01"
-    }},
-    "performer": {{
-      "@type": "MusicGroup",
-      "name": "BayRaagis"
-    }}
-  }}
+  {json_ld}
   </script>
 </head>
 <body class="bg-mandala page-enter" x-data="{{ mobileOpen: false }}">
@@ -332,6 +350,7 @@ def shell(rel_path: str, title: str, description: str, body: str, og_type: str =
   {header(p)}
   <main id="main">{body}</main>
   {footer(p)}
+  <script src="{p}assets/js/events-data.js"></script>
   <script src="{p}assets/js/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {{
@@ -344,12 +363,37 @@ def shell(rel_path: str, title: str, description: str, body: str, og_type: str =
 """
 
 
-def page_hero(title: str, subtitle: str, crumbs: str) -> str:
+def write_events_data():
+    """Export published events for countdown and other client features (single source: EVENTS)."""
+    payload = []
+    for ev in EVENTS:
+        if not ev.get("published", True):
+            continue
+        payload.append(
+            {
+                "slug": ev["slug"],
+                "title": ev["title"],
+                "startAt": ev["start_at"],
+                "endAt": ev["end_at"],
+                "timezone": ev.get("timezone", "America/Los_Angeles"),
+                "published": True,
+            }
+        )
+    js_path = ROOT / "assets" / "js" / "events-data.js"
+    js_path.parent.mkdir(parents=True, exist_ok=True)
+    js_path.write_text(
+        "window.RASRAGA_EVENTS = " + json.dumps(payload, indent=2) + ";\n",
+        encoding="utf-8",
+    )
+    print("✓ assets/js/events-data.js")
+
+
+def page_hero(title: str, subtitle: str, crumbs: str, eyebrow: str = "Ras Raaga") -> str:
     return f"""
 <section class="page-hero">
   <div class="container">
     <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs}</nav>
-    <p class="eyebrow">Ras Raaga · {EVENT_DATE}</p>
+    <p class="eyebrow">{eyebrow}</p>
     <h1>{title}</h1>
     <div class="gold-line center"></div>
     <p>{subtitle}</p>
@@ -363,16 +407,44 @@ def cta_block(p: str = "") -> str:
 <section class="section">
   <div class="container">
     <div class="cta-banner reveal">
-      <p class="eyebrow">August 30, 2026 · Fremont</p>
-      <h2>Ready for an evening of bliss?</h2>
-      <p>Doors open at 4:00 PM. Live bhajans with BayRaagis from 5:00–8:00 PM. Secure your seat and invite someone you love.</p>
+      <p class="eyebrow">Join the experience</p>
+      <h2>Ready for your next cultural evening?</h2>
+      <p>Explore upcoming events, secure tickets through our official partner, or partner with us as a sponsor or food vendor.</p>
       <div class="flex-center mt-3">
-        <a class="btn btn-gold" href="{TICKET}" target="_blank" rel="noopener">Book Tickets</a>
-        <a class="btn btn-outline-light" href="{p}event/schedule.html">View Schedule</a>
+        <a class="btn btn-gold" href="{p}events/index.html">Upcoming Events</a>
+        <a class="btn btn-outline-light" href="{p}sponsorship.html">Become a Sponsor</a>
       </div>
     </div>
   </div>
 </section>
+"""
+
+
+def event_card_html(ev: dict, p: str) -> str:
+    price = (
+        f'<p class="event-card-price"><strong>Tickets</strong> from {ev["ticket_price_label"]}</p>'
+        if ev.get("ticket_price_label")
+        else '<p class="event-card-price"><strong>Tickets</strong> Available via official booking</p>'
+    )
+    return f"""
+<article class="event-card reveal">
+  <div class="event-card-media" aria-hidden="true"><span>{ev.get("image_label", "♪")}</span></div>
+  <div class="event-card-body">
+    <h3>{ev["title"]}</h3>
+    <p>{ev["short_desc"]}</p>
+    <ul class="event-card-meta">
+      <li><strong>Date</strong> {ev["date"]}</li>
+      <li><strong>Time</strong> {ev["time"]}</li>
+      <li><strong>Venue</strong> {ev["venue"]}</li>
+      <li><strong>Location</strong> {ev["city"]}</li>
+    </ul>
+    {price}
+    <div class="event-card-actions">
+      <a class="btn btn-outline" href="{p}events/{ev["slug"]}.html">View Event Details</a>
+      <a class="btn btn-gold" href="{ev["ticket_url"]}" target="_blank" rel="noopener">Get Tickets</a>
+    </div>
+  </div>
+</article>
 """
 
 
@@ -556,74 +628,121 @@ def lead_fallback(title: str) -> str:
 
 
 def generate():
+    write_events_data()
     # ——— HOME ———
     p = ""
+    home_event_cards = "".join(event_card_html(ev, "") for ev in EVENTS)
     write(
         "index.html",
         SITE_NAME,
-        "Bhajan Clubbing with Ras Raaga — An Evening of Bhajans, Bliss & Beyond. 30 August 2026, Fremont CA. Live with BayRaagis.",
+        "Ras Raaga conducts and promotes cultural, community, youth, and family events — performances, food experiences, sponsorship opportunities, and community connection.",
         f"""
 <section class="hero">
-  <span class="float-decor" style="top:15%;left:8%;animation-delay:0s">❀</span>
-  <span class="float-decor" style="top:25%;right:12%;animation-delay:1.5s">♪</span>
-  <span class="float-decor" style="bottom:20%;left:18%;animation-delay:3s">ॐ</span>
-  <div class="container hero-content">
-    <p class="eyebrow">Fremont, California · {EVENT_DATE}</p>
-    <h1>Bhajan Clubbing with Ras Raaga</h1>
-    <p class="tagline">An Evening of Bhajans, Bliss &amp; Beyond</p>
-    <div class="gold-line"></div>
-    <p style="max-width:36rem;color:rgba(253,246,227,0.9)">Join a premium spiritual celebration with live performances by <strong style="color:var(--gold-light)">BayRaagis</strong>. Doors open 4:00 PM · Program 5:00–8:00 PM · {VENUE}</p>
-    <div class="hero-meta">
-      <div><strong>Date</strong>{EVENT_DATE}</div>
-      <div><strong>Doors</strong>4:00 PM</div>
-      <div><strong>Program</strong>5:00 PM – 8:00 PM</div>
-      <div><strong>Artists</strong>BayRaagis</div>
+  <div class="container hero-content hero-content--clean">
+    <div class="hero-brand">
+      <img class="hero-logo" src="assets/images/logo-gold.png" alt="Ras Raaga" width="120" height="150" decoding="async" />
     </div>
+    <h1>Celebrating Culture. Connecting Communities.</h1>
+    <p class="hero-support">Discover vibrant cultural events, live performances, youth activities, family entertainment, food experiences, and meaningful community connections.</p>
     <div class="hero-actions">
-      <a class="btn btn-gold" href="{TICKET}" target="_blank" rel="noopener">Book Tickets</a>
-      <a class="btn btn-outline-light" href="event/overview.html">Explore the Event</a>
+      <a class="btn btn-gold" href="events/index.html">Explore Upcoming Events</a>
+      <a class="btn btn-outline-light" href="sponsorship.html">Become a Sponsor</a>
     </div>
-    <div class="countdown mt-4" data-countdown aria-label="Countdown to event">
-      <div class="countdown-unit"><span class="num" data-unit="days">00</span><span class="label">Days</span></div>
-      <div class="countdown-unit"><span class="num" data-unit="hours">00</span><span class="label">Hours</span></div>
-      <div class="countdown-unit"><span class="num" data-unit="mins">00</span><span class="label">Mins</span></div>
-      <div class="countdown-unit"><span class="num" data-unit="secs">00</span><span class="label">Secs</span></div>
+    <div class="hero-countdown" data-next-event-countdown hidden>
+      <p class="hero-countdown-heading">Countdown to Our Next Event</p>
+      <p class="hero-countdown-event" data-countdown-event-title></p>
+      <div class="countdown" data-countdown-units aria-live="polite">
+        <div class="countdown-unit"><span class="num" data-unit="days">00</span><span class="label">Days</span></div>
+        <div class="countdown-unit"><span class="num" data-unit="hours">00</span><span class="label">Hours</span></div>
+        <div class="countdown-unit"><span class="num" data-unit="mins">00</span><span class="label">Minutes</span></div>
+        <div class="countdown-unit"><span class="num" data-unit="secs">00</span><span class="label">Seconds</span></div>
+      </div>
+      <p class="hero-countdown-live" data-countdown-live hidden>The Event Is Live</p>
     </div>
   </div>
 </section>
 
 <section class="section">
-  <div class="container text-center">
-    <p class="eyebrow reveal">The Experience</p>
-    <h2 class="section-title reveal">Where devotion meets celebration</h2>
-    <div class="gold-line center"></div>
-    <p class="section-lead reveal" style="margin-inline:auto">Ras Raaga presents Bhajan Clubbing — a warm, elegant gathering for hearts seeking joy, community, and the living power of the Divine Name.</p>
-    <div class="grid-3 mt-4">
-      <div class="feature-block reveal"><div class="feature-icon">♪</div><h3>Live Bhajans</h3><p>BayRaagis bring soul-stirring live performances — rhythm, raag, and reverence.</p></div>
-      <div class="feature-block reveal reveal-delay-1"><div class="feature-icon">❀</div><h3>Sacred Atmosphere</h3><p>Premium ambiance with soft spiritual aesthetics — beautiful, welcoming, unforgettable.</p></div>
-      <div class="feature-block reveal reveal-delay-2"><div class="feature-icon">ॐ</div><h3>Community Bliss</h3><p>Sing together, meet kindred spirits, and leave with a quieter, brighter heart.</p></div>
+  <div class="container">
+    <div class="grid-2" style="align-items:center">
+      <div class="reveal">
+        <p class="eyebrow">About Ras Raaga</p>
+        <h2 class="section-title">A platform for cultural &amp; community celebration</h2>
+        <div class="gold-line"></div>
+        <p class="section-lead">Ras Raaga organizes and promotes cultural, community, entertainment, youth, and family events. We bring people together through performances, activities, food vendors, sponsors, and shared experiences that strengthen belonging across the Bay Area.</p>
+        <a class="btn btn-outline mt-2" href="about/index.html">Learn About Us</a>
+      </div>
+      <div class="grid-2 reveal reveal-delay-1" style="gap:1rem">
+        <div class="feature-block"><div class="feature-icon">♪</div><h3>Performances</h3><p>Live music and cultural showcases that celebrate heritage with joy.</p></div>
+        <div class="feature-block"><div class="feature-icon">❀</div><h3>Community</h3><p>Spaces where families, youth, and neighbors connect meaningfully.</p></div>
+      </div>
     </div>
   </div>
 </section>
 
+<section class="section-sm">
+  <div class="container">
+    <div class="text-center">
+      <p class="eyebrow reveal">What’s next</p>
+      <h2 class="section-title reveal">Upcoming events</h2>
+      <div class="gold-line center"></div>
+      <p class="section-lead reveal" style="margin-inline:auto">Browse current and upcoming gatherings. Dates, venues, and tickets live on each event’s detail page.</p>
+    </div>
+    <div class="event-grid mt-4">{home_event_cards}</div>
+    <p class="text-center mt-3"><a class="btn btn-outline" href="events/index.html">View All Upcoming Events</a></p>
+  </div>
+</section>
+
 <section class="section bg-maroon">
+  <div class="container text-center">
+    <p class="eyebrow reveal">The experience</p>
+    <h2 class="reveal">What our events offer</h2>
+    <div class="gold-line center"></div>
+    <p class="reveal" style="max-width:40rem;margin-inline:auto">From live performances to youth activities and family entertainment, each gathering is crafted for warmth, hospitality, and cultural pride.</p>
+    <div class="grid-3 mt-4">
+      <div class="feature-block reveal" style="background:rgba(255,255,255,0.06);border-color:rgba(212,175,55,0.35)"><h3 style="color:var(--cream)">Live performances</h3><p>Artists and cultural programs that bring energy and heart to every evening.</p></div>
+      <div class="feature-block reveal reveal-delay-1" style="background:rgba(255,255,255,0.06);border-color:rgba(212,175,55,0.35)"><h3 style="color:var(--cream)">Youth &amp; family</h3><p>Welcoming experiences designed for all ages — participation, joy, and belonging.</p></div>
+      <div class="feature-block reveal reveal-delay-2" style="background:rgba(255,255,255,0.06);border-color:rgba(212,175,55,0.35)"><h3 style="color:var(--cream)">Food &amp; vendors</h3><p>Restaurant and food vendor booths where guests can purchase meals and refreshments.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
   <div class="container">
     <div class="grid-2" style="align-items:center">
       <div class="reveal">
-        <p class="eyebrow">About the evening</p>
-        <h2>Bliss is better shared</h2>
+        <p class="eyebrow">Youth &amp; families</p>
+        <h2 class="section-title">Built for the next generation — and everyone who loves them</h2>
         <div class="gold-line"></div>
-        <p>On {EVENT_DATE}, step into an evening crafted for devotion without stiffness — joy without emptiness. From the first clap to the final Om, Bhajan Clubbing is designed to feel like a festival of the heart.</p>
-        <a class="btn btn-gold mt-2" href="about/story.html">Our Story</a>
+        <p>Our events welcome youth participation and family-friendly experiences. Whether you are attending your first cultural evening or continuing a family tradition, there is a place for you in the circle.</p>
+        <a class="btn btn-outline mt-2" href="community/join.html">Join the Community</a>
       </div>
-      <div class="meta-box reveal reveal-delay-1" style="background:rgba(255,255,255,0.06);border-color:rgba(212,175,55,0.35)">
-        <dl>
-          <dt>Venue</dt><dd style="color:var(--cream)">{VENUE}</dd>
-          <dt>Doors Open</dt><dd style="color:var(--cream)">4:00 PM</dd>
-          <dt>Program</dt><dd style="color:var(--cream)">5:00 PM – 8:00 PM</dd>
-          <dt>Artists</dt><dd style="color:var(--cream)">BayRaagis (Live)</dd>
-          <dt>Instagram</dt><dd style="color:var(--cream)"><a href="{IG}" style="color:var(--gold-light)" target="_blank" rel="noopener">@rasraaga</a></dd>
-        </dl>
+      <div class="reveal feature-block">
+        <h3>Community impact</h3>
+        <p>Every gathering strengthens local culture, supports artists and vendors, and creates shared memories. Volunteers, sponsors, and attendees together make these evenings possible.</p>
+        <a href="community/volunteer.html">Volunteer with us →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="grid-2">
+      <div class="feature-block reveal">
+        <p class="eyebrow">Sponsorship</p>
+        <h2>Partner with culturally engaged audiences</h2>
+        <div class="gold-line"></div>
+        <p>Local businesses, restaurants, community organizations, and brands can partner with our events for meaningful visibility before, during, and after each gathering.</p>
+        <a class="btn btn-gold mt-2" href="sponsorship.html">Become a Sponsor</a>
+      </div>
+      <div class="feature-block reveal reveal-delay-1">
+        <p class="eyebrow">Restaurants &amp; food vendors</p>
+        <h2>Serve the community</h2>
+        <div class="gold-line"></div>
+        <p>Food will be available for purchase at events. Restaurants may operate food booths, and vendor or sponsorship opportunities are available. Interested restaurants can contact the event team for participation details.</p>
+        <p style="font-size:0.9rem"><em>Standard admission does not include food unless a food-credit package is selected at ticketing.</em></p>
+        <a class="btn btn-outline mt-2" href="contact.html">Contact for Vendor Details</a>
       </div>
     </div>
   </div>
@@ -632,13 +751,24 @@ def generate():
 <section class="section">
   <div class="container">
     <div class="text-center">
-      <h2 class="section-title reveal">Proudly supported by</h2>
+      <h2 class="section-title reveal">Proud partners</h2>
       <div class="gold-line center"></div>
     </div>
     <div class="grid-4 mt-3">
       {"".join(f'<a class="sponsor-tile reveal" href="sponsors/{s[0]}.html"><div class="name">{s[1]}</div><div class="tag">{s[2]}</div></a>' for s in SPONSORS)}
     </div>
-    <p class="text-center mt-3"><a class="btn btn-outline" href="sponsors/index.html">View All Sponsors</a></p>
+    <p class="text-center mt-3"><a class="btn btn-outline" href="sponsors/index.html">View All Sponsors</a>
+    <a class="btn btn-gold" href="sponsorship.html">Sponsorship Opportunities</a></p>
+  </div>
+</section>
+
+<section class="section-sm bg-maroon">
+  <div class="container text-center reveal">
+    <p class="eyebrow">Your voice matters</p>
+    <h2>Share your feedback</h2>
+    <div class="gold-line center"></div>
+    <p style="max-width:36rem;margin-inline:auto">Attendees, sponsors, vendors, and volunteers — tell us about your experience. Your feedback helps us improve future events.</p>
+    <a class="btn btn-gold mt-3" href="feedback.html">Give Feedback</a>
   </div>
 </section>
 
@@ -662,16 +792,16 @@ def generate():
     write(
         "about/index.html",
         "About Ras Raaga",
-        "Learn about Ras Raaga — a Bay Area movement bringing premium bhajan experiences and spiritual community together.",
-        page_hero("About Ras Raaga", "A home for joyful devotion, elegant gatherings, and hearts that remember the Divine.", '<a href="../index.html">Home</a> / About')
+        "Learn about Ras Raaga — a Bay Area organization conducting cultural, community, youth, and family events.",
+        page_hero("About Ras Raaga", "Celebrating culture and connecting communities through joyful gatherings.", '<a href="../index.html">Home</a> / About')
         + f"""
 <section class="section"><div class="container-narrow prose reveal">
-<p>Ras Raaga was born from a simple longing: to experience bhakti in a way that feels alive for today’s Bay Area — warm, beautiful, and communal.</p>
-<p>We believe spirituality need not be heavy. It can shimmer with gold light, soft laughter, and voices rising together. <em>Bhajan Clubbing</em> is our offering — an evening where tradition dances with celebration.</p>
-<p>Rooted in Fremont and open to all sincere seekers, Ras Raaga welcomes families, first-timers, longtime devotees, and anyone curious about the bliss of the Name.</p>
-<p>Follow our journey on Instagram <a href="{IG}" target="_blank" rel="noopener">@rasraaga</a>, and join us on {EVENT_DATE}.</p>
+<p>Ras Raaga is an organization and platform that conducts and promotes cultural, community, entertainment, youth, and family events across the Bay Area.</p>
+<p>We believe celebration can be warm, beautiful, and communal — bringing together performances, activities, food vendors, sponsors, and people of all ages who want to belong.</p>
+<p>From signature evenings like Bhajan Clubbing to future cultural gatherings, our mission is to create welcoming experiences that strengthen community connection.</p>
+<p>Follow our journey on Instagram <a href="{IG}" target="_blank" rel="noopener">@rasraaga</a>, explore <a href="../events/index.html">upcoming events</a>, or <a href="../sponsorship.html">partner with us</a>.</p>
 <p><a class="btn btn-gold" href="../about/vision-mission.html">Vision &amp; Mission</a>
-<a class="btn btn-outline" href="{TICKET}" target="_blank" rel="noopener">Book Tickets</a></p>
+<a class="btn btn-outline" href="../events/index.html">Upcoming Events</a></p>
 </div></section>{cta_block("../")}
 """,
     )
@@ -679,22 +809,22 @@ def generate():
     write(
         "about/vision-mission.html",
         "Vision & Mission",
-        "Ras Raaga’s vision and mission — building joyful spiritual community through bhajan and belonging in the Bay Area.",
-        page_hero("Our Vision & Mission", "To make sacred joy public, elegant, and welcoming.", '<a href="../index.html">Home</a> / <a href="index.html">About</a> / Vision')
+        "Ras Raaga’s vision and mission — building joyful cultural community through events and belonging in the Bay Area.",
+        page_hero("Our Vision & Mission", "To make cultural joy public, elegant, and welcoming.", '<a href="../index.html">Home</a> / <a href="index.html">About</a> / Vision')
         + f"""
 <section class="section"><div class="container grid-2">
 <div class="feature-block reveal"><h3>Vision</h3><div class="gold-line"></div>
-<p>A Bay Area where devotion is celebrated with beauty — where people of all ages gather to sing, connect, and remember that bliss is our birthright.</p></div>
+<p>A Bay Area where culture and community are celebrated with beauty — where people of all ages gather to experience performances, connect, and belong.</p></div>
 <div class="feature-block reveal reveal-delay-1"><h3>Mission</h3><div class="gold-line"></div>
-<p>To curate premium spiritual experiences like Bhajan Clubbing, support artists who serve through music, partner with community sponsors, and grow a family rooted in bhakti and kindness.</p></div>
+<p>To curate cultural and community events, support artists and youth participation, partner with sponsors and food vendors, and grow a family rooted in kindness and shared celebration.</p></div>
 </div>
 <div class="container-narrow prose mt-4 reveal">
 <h2>Values we hold</h2>
 <ul>
-<li><strong>Bhakti first</strong> — the Name is the center.</li>
+<li><strong>Culture first</strong> — heritage and joy at the center.</li>
 <li><strong>Inclusion</strong> — every sincere heart has a seat.</li>
-<li><strong>Excellence</strong> — beauty honors the sacred.</li>
-<li><strong>Community</strong> — we rise by lifting each other.</li>
+<li><strong>Excellence</strong> — beauty honors community.</li>
+<li><strong>Partnership</strong> — we rise by lifting sponsors, vendors, and volunteers.</li>
 </ul>
 </div></section>{cta_block("../")}
 """,
@@ -702,45 +832,192 @@ def generate():
 
     write(
         "about/story.html",
-        "The Story Behind Bhajan Clubbing",
-        "How Bhajan Clubbing began — the story of Ras Raaga’s joyful fusion of devotion and celebration.",
-        page_hero("The Story Behind Bhajan Clubbing", "When temple-heart met community-night energy.", '<a href="../index.html">Home</a> / <a href="index.html">About</a> / Story')
+        "Our Story",
+        "How Ras Raaga began — building joyful cultural gatherings for the Bay Area community.",
+        page_hero("Our Story", "When cultural heart met community celebration.", '<a href="../index.html">Home</a> / <a href="index.html">About</a> / Story')
         + f"""
 <section class="section"><div class="container-narrow prose reveal">
-<p>The phrase started as a spark: what if bhajan nights felt as anticipated as the best evenings out — without losing an ounce of reverence?</p>
-<p>Too often, spiritual life is boxed into quiet corners while celebration is outsourced to spaces that leave us empty. Bhajan Clubbing was imagined as a bridge — sacred music, premium ambiance, and the thrill of gathering.</p>
-<p>Ras Raaga shaped that spark into an event: live artists, intentional hospitality, and a Fremont address ready to welcome hundreds of hearts on {EVENT_DATE}.</p>
-<blockquote>“Clubbing” here means community — coming together with joy. The playlist is divine.</blockquote>
-<p>This is only the beginning. Every ticket, volunteer hour, and shared Om writes the next chapter.</p>
+<p>Ras Raaga began with a simple longing: to create gatherings that feel alive for today’s Bay Area — warm, beautiful, and communal.</p>
+<p>Too often, cultural life is boxed into quiet corners while celebration is outsourced to spaces that leave us empty. We imagined a bridge — meaningful programs, welcoming hospitality, and the thrill of gathering together.</p>
+<p>That spark grew into events like <a href="../events/bhajan-clubbing.html">Bhajan Clubbing</a> and a broader platform for cultural, youth, and family experiences. This is only the beginning — every ticket, volunteer hour, and partnership writes the next chapter.</p>
+<blockquote>We gather to celebrate culture and connect communities.</blockquote>
 </div></section>{cta_block("../")}
 """,
     )
 
-    # ——— EVENT ———
+    # ——— UPCOMING EVENTS ———
+    events_list = "".join(event_card_html(ev, "../") for ev in EVENTS)
+    write(
+        "events/index.html",
+        "Upcoming Events",
+        "Browse current and upcoming Ras Raaga cultural and community events. View details and get tickets.",
+        page_hero("Upcoming Events", "Current and future gatherings — culture, community, youth, and family.", '<a href="../index.html">Home</a> / Upcoming Events')
+        + f"""
+<section class="section"><div class="container">
+<p class="section-lead reveal" style="max-width:40rem">Explore our upcoming events. Select an event for full details including schedule, venue, tickets, food information, and participation opportunities.</p>
+<div class="event-grid mt-4">{events_list}</div>
+</div></section>
+""",
+    )
+
+    for ev in EVENTS:
+        highlights = "".join(f"<li>{h}</li>" for h in ev["highlights"])
+        instructions = "".join(f"<li>{i}</li>" for i in ev["instructions"])
+        sponsor_logos = "".join(
+            f'<a class="sponsor-tile" href="../sponsors/{slug}.html"><div class="name">{name}</div><div class="tag">{tag}</div></a>'
+            for slug, name, tag, _ in SPONSORS
+        )
+        event_json_ld = f"""{{
+    "@context": "https://schema.org",
+    "@type": "MusicEvent",
+    "name": "{ev["title"]}",
+    "startDate": "2026-08-30T17:00:00-07:00",
+    "endDate": "2026-08-30T20:00:00-07:00",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "location": {{
+      "@type": "Place",
+      "name": "{ev["venue_name"]}",
+      "address": {{
+        "@type": "PostalAddress",
+        "streetAddress": "585 Mowry Ave",
+        "addressLocality": "Fremont",
+        "addressRegion": "CA",
+        "postalCode": "94536",
+        "addressCountry": "US"
+      }}
+    }},
+    "image": ["{SITE_BASE}/assets/images/logo-on-black.png"],
+    "description": "{ev["short_desc"]}",
+    "organizer": {{
+      "@type": "Organization",
+      "name": "Ras Raaga",
+      "url": "{SITE_BASE}/"
+    }},
+    "offers": {{
+      "@type": "Offer",
+      "url": "{ev["ticket_url"]}",
+      "availability": "https://schema.org/InStock",
+      "validFrom": "2026-01-01"
+    }},
+    "performer": {{
+      "@type": "MusicGroup",
+      "name": "BayRaagis"
+    }}
+  }}"""
+        write(
+            f"events/{ev['slug']}.html",
+            ev["title"],
+            ev["short_desc"],
+            page_hero(ev["title"], "Event details, tickets, and what to expect.", f'<a href="../index.html">Home</a> / <a href="index.html">Upcoming Events</a> / {ev["title"]}', eyebrow="Event details")
+            + f"""
+<section class="section"><div class="container">
+<div class="event-banner reveal" aria-hidden="true"><span>{ev.get("image_label", "♪")}</span><strong>{ev["title"]}</strong></div>
+<div class="grid-2 mt-4">
+<div class="prose reveal">
+<h2>About this event</h2>
+<p>{ev["short_desc"]}</p>
+<p>An Evening of Bhajans, Bliss &amp; Beyond — a live cultural music evening featuring <strong>{ev["artists"]}</strong>. Come for the performances; stay for community connection and family-friendly celebration.</p>
+<h3>Event highlights</h3>
+<ul>{highlights}</ul>
+<h3>Performances &amp; activities</h3>
+<p>{ev["performances"]}</p>
+<h3>Youth &amp; family participation</h3>
+<p>{ev["youth_family"]}</p>
+<h3>Food availability</h3>
+<p><strong>Food is not included with the standard admission ticket. Food and beverages will be available for purchase from participating restaurant and food vendor booths.</strong></p>
+<p>{ev["food_info"]}</p>
+</div>
+<div class="reveal">
+<div class="meta-box">
+<dl>
+<dt>Date</dt><dd>{ev["date"]}</dd>
+<dt>Timings</dt><dd>Doors {ev["doors"]} · Program {ev["program"]}</dd>
+<dt>Venue</dt><dd>{ev["venue_name"]}</dd>
+<dt>Address</dt><dd>{ev["venue"]}</dd>
+<dt>City</dt><dd>{ev["city"]}</dd>
+<dt>Artists</dt><dd>{ev["artists"]}</dd>
+</dl>
+</div>
+<div class="ticket-panel mt-3">
+<p class="eyebrow">Official ticketing</p>
+<h3>Get tickets</h3>
+<p>Exact ticket categories and prices are shown on the official ticketing platform. We do not list invented prices on this site.</p>
+<a class="btn btn-gold" style="width:100%;margin-bottom:0.75rem" href="{ev["ticket_url"]}" target="_blank" rel="noopener">Get Tickets</a>
+<p style="font-size:0.85rem">You will be redirected to our secure ticketing partner at buytickets.at</p>
+<p class="mt-2"><a href="../tickets/faqs.html">Ticket FAQs</a> · <a href="../event/schedule.html">Schedule</a> · <a href="../event/venue.html">Venue</a></p>
+</div>
+</div>
+</div>
+
+<div class="grid-2 mt-4">
+<div class="feature-block reveal">
+<h3>Ticket categories</h3>
+<p>{ev["ticket_categories_note"]}</p>
+<ul>
+<li>Youth Admission – Below 18 Years <em>(when offered)</em></li>
+<li>General Admission</li>
+<li>Admission with Food Credit <em>(optional add-on, when offered)</em></li>
+</ul>
+<p style="font-size:0.9rem">Confirm current categories and pricing at checkout via the Get Tickets button above.</p>
+</div>
+<div class="feature-block reveal">
+<h3>Important instructions</h3>
+<ul>{instructions}</ul>
+</div>
+</div>
+
+<div class="feature-block reveal mt-4">
+<h3>Contact for this event</h3>
+<p>{ev["contact_note"]}</p>
+<p><a class="btn btn-outline" href="../contact.html">Contact Us</a>
+<a class="btn btn-outline" href="mailto:{ADMIN_EMAIL}">Email {ADMIN_EMAIL}</a></p>
+</div>
+
+<div class="mt-4 reveal">
+<h2 class="section-title text-center">Sponsors &amp; partners</h2>
+<div class="gold-line center"></div>
+<div class="grid-4 mt-3">{sponsor_logos}</div>
+<p class="text-center mt-3"><a href="../sponsors/index.html">View all sponsors</a> · <a href="../sponsorship.html">Become a sponsor</a></p>
+</div>
+
+<div class="flex-center mt-4">
+<a class="btn btn-gold" href="{ev["ticket_url"]}" target="_blank" rel="noopener">Get Tickets</a>
+<a class="btn btn-outline" href="../event/what-to-expect.html">What to Expect</a>
+<a class="btn btn-outline" href="../event/dress-code.html">Dress Code</a>
+</div>
+</div></section>
+""",
+            extra_json_ld=event_json_ld,
+        )
+
+    # ——— EVENT (legacy detail pages — kept for existing links) ———
     write(
         "event/overview.html",
         "Event Overview",
         "Bhajan Clubbing with Ras Raaga — event overview for 30 August 2026 in Fremont with BayRaagis.",
-        page_hero("Event Overview", "Everything you need to know about the evening.", '<a href="../index.html">Home</a> / The Event')
+        page_hero("Event Overview", "Everything you need to know about the evening.", '<a href="../index.html">Home</a> / <a href="../events/index.html">Upcoming Events</a> / Overview', eyebrow="Bhajan Clubbing")
         + f"""
 <section class="section"><div class="container">
 <div class="grid-2">
 <div class="prose reveal">
-<p><strong>Bhajan Clubbing with Ras Raaga</strong> is a live spiritual music evening featuring <strong>BayRaagis</strong>. Come for the bhajans; stay for the bliss and the beyond — the soft afterglow of community devotion.</p>
+<p><strong>Bhajan Clubbing with Ras Raaga</strong> is a live cultural music evening featuring <strong>BayRaagis</strong>. Come for the bhajans; stay for community connection and family-friendly celebration.</p>
 <ul>
 <li>Date: <strong>{EVENT_DATE}</strong></li>
 <li>Venue: <strong>{VENUE}</strong></li>
 <li>Doors: <strong>4:00 PM</strong></li>
 <li>Program: <strong>5:00 PM – 8:00 PM</strong></li>
 </ul>
-<p><a class="btn btn-gold" href="{TICKET}" target="_blank" rel="noopener">Book Tickets</a>
+<p><strong>Food is not included with the standard admission ticket.</strong> Food and beverages will be available for purchase from participating restaurant and food vendor booths.</p>
+<p><a class="btn btn-gold" href="../events/bhajan-clubbing.html">Full Event Details</a>
+<a class="btn btn-outline" href="{TICKET}" target="_blank" rel="noopener">Get Tickets</a>
 <a class="btn btn-outline" href="schedule.html">Full Schedule</a></p>
 </div>
 <div class="meta-box reveal">
 <dl>
 <dt>Tagline</dt><dd>An Evening of Bhajans, Bliss &amp; Beyond</dd>
 <dt>Artists</dt><dd>BayRaagis (Live Performances)</dd>
-<dt>Best for</dt><dd>Families, seekers, music lovers, first-timers</dd>
+<dt>Best for</dt><dd>Families, youth, music lovers, first-timers</dd>
 <dt>Social</dt><dd><a href="{IG}" target="_blank" rel="noopener">@rasraaga</a></dd>
 </dl>
 </div>
@@ -871,18 +1148,19 @@ src="https://maps.google.com/maps?q=585%20Mowry%20Ave%2C%20Fremont%2C%20CA%20945
     write(
         "tickets/book.html",
         "Book Tickets",
-        "Book tickets for Ras Raaga Bhajan Clubbing — 30 August 2026, Fremont. Secure your seat today.",
-        page_hero("Book Tickets", "Secure your place in an evening of bhajans, bliss & beyond.", '<a href="../index.html">Home</a> / Tickets')
+        "Book tickets for Ras Raaga events via our official ticketing partner. Current event: Bhajan Clubbing, 30 August 2026, Fremont.",
+        page_hero("Book Tickets", "Secure your place through our official ticketing partner.", '<a href="../index.html">Home</a> / Tickets', eyebrow="Official ticketing")
         + f"""
 <section class="section"><div class="container" style="max-width:640px">
 <div class="ticket-panel reveal">
-<p class="eyebrow">Official ticketing</p>
+<p class="eyebrow">Current event</p>
 <h2>Bhajan Clubbing with Ras Raaga</h2>
 <p>{EVENT_DATE} · {VENUE}<br/>Doors 4:00 PM · Program 5:00–8:00 PM · BayRaagis Live</p>
 <div class="gold-line center"></div>
 <a class="btn btn-gold" style="width:100%;margin-bottom:0.75rem" href="{TICKET}" target="_blank" rel="noopener">Buy Tickets Now</a>
 <p style="font-size:0.85rem">You will be redirected to our secure ticketing partner at buytickets.at</p>
-<p class="mt-2"><a href="faqs.html">Ticket FAQs</a> · <a href="group-booking.html">Group Booking</a> · <a href="../legal/refund.html">Refund Policy</a></p>
+<p class="mt-2" style="font-size:0.9rem"><strong>Food is not included with the standard admission ticket.</strong> Food and beverages will be available for purchase from participating vendors. Optional food-credit packages may appear on the ticketing page when offered.</p>
+<p class="mt-2"><a href="../events/bhajan-clubbing.html">Event Details</a> · <a href="faqs.html">Ticket FAQs</a> · <a href="group-booking.html">Group Booking</a> · <a href="../legal/refund.html">Refund Policy</a></p>
 </div>
 </div></section>
 """,
@@ -919,18 +1197,94 @@ src="https://maps.google.com/maps?q=585%20Mowry%20Ave%2C%20Fremont%2C%20CA%20945
 <li>For large groups (10+) or special seating questions, <a href="../contact.html">contact us</a> with your group size and names.</li>
 <li>Arrive together by doors at 4:00 PM when possible.</li>
 </ol>
-<p>Corporate or sponsor group packages may be available — see <a href="../sponsors/index.html">Sponsors &amp; Partnership</a>.</p>
+<p>Corporate or sponsor group packages may be available — see <a href="../sponsorship.html">Sponsorship</a>.</p>
 <a class="btn btn-gold" href="{TICKET}" target="_blank" rel="noopener">Book Group Tickets</a>
 </div></section>
 """,
     )
 
-    # ——— SPONSORS ———
+    # ——— SPONSORS & SPONSORSHIP ———
+    benefit_rows = "".join(
+        f"<tr><th scope=\"row\">{row[0]}</th>"
+        + "".join(f"<td>{cell}</td>" for cell in row[1:])
+        + "</tr>"
+        for row in SPONSOR_BENEFITS
+    )
+    level_headers = "".join(f"<th scope=\"col\">{lvl}</th>" for lvl in SPONSOR_LEVELS)
+    write(
+        "sponsorship.html",
+        "Become a Sponsor",
+        "Partner with Ras Raaga — sponsorship opportunities for businesses, restaurants, and community organizations.",
+        page_hero("Become a Sponsor", "Meaningful visibility with families, youth, and culturally engaged audiences.", '<a href="index.html">Home</a> / Sponsorship')
+        + f"""
+<section class="section"><div class="container">
+<div class="container-narrow prose reveal" style="max-width:48rem;margin-inline:auto">
+<p>Partner with us to connect your business with families, youth, community leaders, and culturally engaged audiences. Our sponsorship opportunities are designed to provide meaningful visibility before, during, and after each event.</p>
+<p>Local businesses, restaurants, community organizations, and brands are welcome to partner with Ras Raaga events. Restaurants and food businesses may also participate as sponsors or food vendors — food will be available for purchase at events, and restaurants may operate food booths.</p>
+</div>
+
+<div class="reveal mt-4">
+<h2 class="section-title text-center">Sponsorship levels</h2>
+<div class="gold-line center"></div>
+<p class="text-center section-lead" style="margin-inline:auto">The comparison below is a placeholder structure. Final packages, prices, and benefits will be provided by the client and can be updated easily.</p>
+<div class="table-wrap mt-3">
+<table class="sponsor-table">
+<thead><tr><th scope="col">Benefit</th>{level_headers}</tr></thead>
+<tbody>{benefit_rows}</tbody>
+</table>
+</div>
+<p class="text-center mt-2" style="font-size:0.85rem">*TBD and Placeholder values are editable until final sponsorship packages are confirmed. Benefits shown are illustrative, not guarantees.</p>
+</div>
+
+<div class="grid-2 mt-4">
+<div class="feature-block reveal">
+<h3>Restaurant &amp; food vendor participation</h3>
+<ul>
+<li>Food will be available for purchase at the event.</li>
+<li>Restaurants may operate food booths.</li>
+<li>Vendor and sponsorship opportunities are available.</li>
+<li>Interested restaurants can contact the event team for participation details.</li>
+</ul>
+<p>Food is not included with every ticket. Guests purchase food separately unless they select an optional food-credit package at ticketing (when offered).</p>
+</div>
+<div class="feature-block reveal" id="sponsorship-enquiry">
+<h3>Request sponsorship details</h3>
+<p>Tell us about your business and we will share the latest packages when available.</p>
+<div class="form-status" data-form-status hidden role="status"></div>
+<form class="site-form" data-mail-form data-mail-to="{ADMIN_EMAIL}" data-mail-subject="Sponsorship Enquiry">
+<label for="sp-name">Full Name <span class="req">*</span></label>
+<input id="sp-name" name="name" required autocomplete="name" />
+<label for="sp-email">Email Address <span class="req">*</span></label>
+<input id="sp-email" name="email" type="email" required autocomplete="email" />
+<label for="sp-org">Business / Organization</label>
+<input id="sp-org" name="organization" autocomplete="organization" />
+<label for="sp-phone">Phone Number</label>
+<input id="sp-phone" name="phone" type="tel" autocomplete="tel" />
+<label for="sp-interest">Interest</label>
+<select id="sp-interest" name="interest">
+<option value="Sponsorship package details">Sponsorship package details</option>
+<option value="Food vendor booth">Food vendor booth</option>
+<option value="Both sponsorship and vendor">Both sponsorship and vendor</option>
+<option value="Other partnership">Other partnership</option>
+</select>
+<label for="sp-msg">Message <span class="req">*</span></label>
+<textarea id="sp-msg" name="message" rows="4" required placeholder="Tell us about your goals and preferred event(s)."></textarea>
+<button class="btn btn-gold" type="submit">Request Sponsorship Details</button>
+</form>
+</div>
+</div>
+
+<p class="text-center mt-4"><a class="btn btn-outline" href="sponsors/index.html">View Current Partners</a>
+<a class="btn btn-outline" href="contact.html">General Contact</a></p>
+</div></section>
+""",
+    )
+
     write(
         "sponsors/index.html",
         "Our Sponsors",
-        "Meet the sponsors supporting Ras Raaga Bhajan Clubbing — partners in culture, food, and community.",
-        page_hero("Our Sponsors", "Grateful to the partners who make sacred celebration possible.", '<a href="../index.html">Home</a> / Sponsors')
+        "Meet the sponsors supporting Ras Raaga events — partners in culture, food, and community.",
+        page_hero("Our Sponsors", "Grateful to the partners who make community celebration possible.", '<a href="../index.html">Home</a> / Sponsors')
         + f"""
 <section class="section"><div class="container">
 <div class="grid-3">
@@ -938,11 +1292,11 @@ src="https://maps.google.com/maps?q=585%20Mowry%20Ave%2C%20Fremont%2C%20CA%20945
 <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(212,175,55,0.3),rgba(74,14,14,0.15));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);color:var(--maroon);font-size:1.4rem">{name[0]}</div>
 <div class="name">{name}</div><div class="tag">{tag}</div></a>''' for slug, name, tag, _ in SPONSORS)}
 </div>
-<p class="text-center mt-4"><a class="btn btn-outline" href="../contact.html">Become a Partner</a>
-<a class="btn btn-gold" href="{TICKET}" target="_blank" rel="noopener">Book Tickets</a></p>
+<p class="text-center mt-4"><a class="btn btn-gold" href="../sponsorship.html">Become a Sponsor</a>
+<a class="btn btn-outline" href="../sponsorship.html#sponsorship-enquiry">Request Sponsorship Details</a></p>
 <div class="container-narrow prose mt-4 reveal text-center">
 <h2>Partnership opportunities</h2>
-<p>Title, community, and in-kind sponsorships welcome. Current partners include Hashtag India, Kumar Jewelers, InstaService.com, Bharat Puja &amp; Gifts, Chaat Bhavan, Mantra India, and Forsys. Reach us via <a href="../contact.html">Contact</a> with subject <strong>Partnership</strong>.</p>
+<p>Silver, Gold, Platinum, and Presenting sponsorship levels are available as placeholder structures until final packages are confirmed. Restaurants may also participate as food vendors. See our <a href="../sponsorship.html">Sponsorship</a> page for the comparison table and enquiry form.</p>
 </div>
 </div></section>
 """,
@@ -1160,27 +1514,103 @@ if (new URLSearchParams(location.search).get('subscribed')) {{
     write(
         "contact.html",
         "Contact",
-        "Contact Ras Raaga for Bhajan Clubbing questions, volunteering, press, and partnerships.",
+        "Contact Ras Raaga for event questions, volunteering, press, sponsorship, and vendor participation.",
         page_hero("Contact Us", "We would love to hear from you.", '<a href="index.html">Home</a> / Contact')
         + f"""
 <section class="section"><div class="container grid-2">
 <div class="prose reveal">
 <h2>Get in touch</h2>
 <p>For ticket issues, please first check <a href="tickets/faqs.html">Ticket FAQs</a> and your ticketing confirmation email.</p>
-<p><strong>Event:</strong> Bhajan Clubbing with Ras Raaga<br/>
-<strong>Date:</strong> {EVENT_DATE}<br/>
-<strong>Venue:</strong> {VENUE}<br/>
+<p><strong>Email:</strong> <a href="mailto:{ADMIN_EMAIL}">{ADMIN_EMAIL}</a><br/>
 <strong>Instagram:</strong> <a href="{IG}" target="_blank" rel="noopener">@rasraaga</a></p>
-<p>For partnerships, see <a href="sponsors/index.html">Sponsors &amp; Partnership</a>. For press, see <a href="media-kit.html">Media Kit</a>.</p>
+<p>For partnerships and food vendor participation, see <a href="sponsorship.html">Sponsorship</a>. For press, see <a href="media-kit.html">Media Kit</a>. To share your experience, visit <a href="feedback.html">Feedback</a>.</p>
+<p><a href="events/index.html">View upcoming events →</a></p>
 </div>
-<form class="feature-block reveal" action="mailto:hello@rasraaga.com" method="get" enctype="text/plain">
-<label for="name" style="display:block;font-weight:600;color:var(--maroon);margin-bottom:0.35rem">Name</label>
-<input id="name" name="subject" required style="width:100%;padding:0.75rem 1rem;border-radius:8px;border:1px solid rgba(212,175,55,0.4);margin-bottom:1rem;font-family:var(--font-body)" placeholder="Your name" />
-<label for="email" style="display:block;font-weight:600;color:var(--maroon);margin-bottom:0.35rem">Email</label>
-<input id="email" name="email" type="email" required style="width:100%;padding:0.75rem 1rem;border-radius:8px;border:1px solid rgba(212,175,55,0.4);margin-bottom:1rem;font-family:var(--font-body)" placeholder="you@email.com" />
-<label for="msg" style="display:block;font-weight:600;color:var(--maroon);margin-bottom:0.35rem">Message</label>
-<textarea id="msg" name="body" rows="5" required style="width:100%;padding:0.75rem 1rem;border-radius:8px;border:1px solid rgba(212,175,55,0.4);margin-bottom:1rem;font-family:var(--font-body)" placeholder="How can we help?"></textarea>
+<div>
+<div class="form-status" data-form-status hidden role="status"></div>
+<form class="feature-block reveal site-form" data-mail-form data-mail-to="{ADMIN_EMAIL}" data-mail-subject="Website Contact">
+<label for="name">Name <span class="req">*</span></label>
+<input id="name" name="name" required autocomplete="name" placeholder="Your name" />
+<label for="email">Email <span class="req">*</span></label>
+<input id="email" name="email" type="email" required autocomplete="email" placeholder="you@email.com" />
+<label for="msg">Message <span class="req">*</span></label>
+<textarea id="msg" name="message" rows="5" required placeholder="How can we help?"></textarea>
 <button class="btn btn-gold" type="submit">Send Message</button>
+</form>
+</div>
+</div></section>
+""",
+    )
+
+    # ——— FEEDBACK ———
+    event_options = "".join(
+        f'<option value="{ev["title"]}">{ev["title"]}</option>' for ev in EVENTS
+    )
+    write(
+        "feedback.html",
+        "Feedback",
+        "Share feedback with Ras Raaga — attendees, sponsors, vendors, and volunteers help us improve future events.",
+        page_hero("Feedback", "Your feedback helps us improve future events and create better experiences for our community.", '<a href="index.html">Home</a> / Feedback')
+        + f"""
+<section class="section"><div class="container" style="max-width:720px">
+<p class="section-lead reveal">Attendees, sponsors, vendors, volunteers, and visitors are invited to report their experience. Submitted feedback is sent to our administrative team and is not displayed publicly.</p>
+<div class="form-status reveal" data-form-status hidden role="status"></div>
+<form class="feature-block reveal site-form mt-3" data-mail-form data-mail-to="{ADMIN_EMAIL}" data-mail-subject="Event Feedback" data-allow-file="true">
+<label for="fb-name">Full Name <span class="req">*</span></label>
+<input id="fb-name" name="name" required autocomplete="name" />
+
+<label for="fb-email">Email Address <span class="req">*</span></label>
+<input id="fb-email" name="email" type="email" required autocomplete="email" />
+
+<label for="fb-phone">Phone Number</label>
+<input id="fb-phone" name="phone" type="tel" autocomplete="tel" />
+
+<label for="fb-event">Event Attended <span class="req">*</span></label>
+<select id="fb-event" name="event_attended" required>
+<option value="">Select an event</option>
+{event_options}
+<option value="Other / General">Other / General</option>
+</select>
+
+<label for="fb-category">Feedback Category <span class="req">*</span></label>
+<select id="fb-category" name="category" required>
+<option value="">Select a category</option>
+<option>General Experience</option>
+<option>Ticketing</option>
+<option>Venue</option>
+<option>Food and Vendors</option>
+<option>Performances</option>
+<option>Youth Activities</option>
+<option>Sponsorship</option>
+<option>Accessibility</option>
+<option>Complaint</option>
+<option>Suggestion</option>
+<option>Other</option>
+</select>
+
+<label for="fb-rating">Rating <span class="req">*</span></label>
+<select id="fb-rating" name="rating" required>
+<option value="">Select a rating</option>
+<option value="5">5 — Excellent</option>
+<option value="4">4 — Good</option>
+<option value="3">3 — Average</option>
+<option value="2">2 — Poor</option>
+<option value="1">1 — Very Poor</option>
+</select>
+
+<label for="fb-message">Message or Feedback <span class="req">*</span></label>
+<textarea id="fb-message" name="message" rows="5" required placeholder="Share your experience, suggestions, or concerns."></textarea>
+
+<label for="fb-file">Photo or File Upload</label>
+<input id="fb-file" name="attachment" type="file" accept="image/*,.pdf,.doc,.docx" />
+<p class="form-hint">After you submit, your email app will open. Please attach the selected file to that email before sending.</p>
+
+<label class="form-check" for="fb-permission">
+<input id="fb-permission" name="permission_to_contact" type="checkbox" value="Yes" />
+<span>Permission to Contact — Ras Raaga may follow up about this feedback</span>
+</label>
+
+<button class="btn btn-gold" type="submit">Submit Feedback</button>
 </form>
 </div></section>
 """,
@@ -1350,9 +1780,9 @@ if (new URLSearchParams(location.search).get('subscribed')) {{
         + f"""
 <section class="section"><div class="container-narrow text-center reveal">
 <p>Thank you for subscribing. We will share event updates, bhajan reflections, and community news — never spam, always with heart.</p>
-<p class="mt-3"><a class="btn btn-gold" href="{TICKET}" target="_blank" rel="noopener">Book Tickets for August 30</a>
+<p class="mt-3"><a class="btn btn-gold" href="events/index.html">Explore Upcoming Events</a>
 <a class="btn btn-outline" href="blog/index.html">Read the Blog</a>
-<a class="btn btn-outline" href="spiritual-resources.html">Spiritual Resources</a></p>
+<a class="btn btn-outline" href="feedback.html">Share Feedback</a></p>
 </div></section>
 """,
     )
@@ -1370,8 +1800,8 @@ if (new URLSearchParams(location.search).get('subscribed')) {{
 <p>The page you seek is not here. Let us guide you back to bliss.</p>
 <div class="flex-center mt-3">
 <a class="btn btn-gold" href="index.html">Go Home</a>
+<a class="btn btn-outline-light" href="events/index.html">Upcoming Events</a>
 <a class="btn btn-outline-light" href="{TICKET}" target="_blank" rel="noopener">Book Tickets</a>
-<a class="btn btn-outline-light" href="event/overview.html">Event Overview</a>
 </div>
 </div>
 </section>
