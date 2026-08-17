@@ -6,7 +6,7 @@ Premium static website for **Bhajan Clubbing with Ras Raaga** — an evening of 
 - **Venue:** 585 Mowry Ave, Fremont, CA 94536  
 - **Doors:** 4:00 PM · **Program:** 5:00 PM – 8:00 PM  
 - **Artists:** BayRaagis (Live)  
-- **Tickets:** [buytickets.at/rasraaga/2311367](https://buytickets.at/rasraaga/2311367)  
+- **Tickets:** [avenueticket.com/event/bhajan-clubbing-with-ras](https://avenueticket.com/event/bhajan-clubbing-with-ras)  
 - **Instagram:** [@rasraaga](https://www.instagram.com/rasraaga/)
 
 ## Tech stack

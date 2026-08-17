@@ -4,7 +4,7 @@ from pathlib import Path
 import json
 
 ROOT = Path(__file__).resolve().parent.parent
-TICKET = "https://buytickets.at/rasraaga/2311367"
+TICKET = "https://avenueticket.com/event/bhajan-clubbing-with-ras"
 IG = "https://www.instagram.com/rasraaga/"
 EVENT_DATE = "30th August 2026"
 VENUE = "585 Mowry Ave, Fremont, CA 94536"
@@ -944,7 +944,7 @@ def generate():
 <h3>Get tickets</h3>
 <p>Exact ticket categories and prices are shown on the official ticketing platform. We do not list invented prices on this site.</p>
 <a class="btn btn-gold" style="width:100%;margin-bottom:0.75rem" href="{ev["ticket_url"]}" target="_blank" rel="noopener">Get Tickets</a>
-<p style="font-size:0.85rem">You will be redirected to our secure ticketing partner at buytickets.at</p>
+<p style="font-size:0.85rem">You will be redirected to our secure ticketing partner at avenueticket.com</p>
 <p class="mt-2"><a href="../tickets/faqs.html">Ticket FAQs</a> · <a href="../event/schedule.html">Schedule</a> · <a href="../event/venue.html">Venue</a></p>
 </div>
 </div>
@@ -1158,7 +1158,7 @@ src="https://maps.google.com/maps?q=585%20Mowry%20Ave%2C%20Fremont%2C%20CA%20945
 <p>{EVENT_DATE} · {VENUE}<br/>Doors 4:00 PM · Program 5:00–8:00 PM · BayRaagis Live</p>
 <div class="gold-line center"></div>
 <a class="btn btn-gold" style="width:100%;margin-bottom:0.75rem" href="{TICKET}" target="_blank" rel="noopener">Buy Tickets Now</a>
-<p style="font-size:0.85rem">You will be redirected to our secure ticketing partner at buytickets.at</p>
+<p style="font-size:0.85rem">You will be redirected to our secure ticketing partner at avenueticket.com</p>
 <p class="mt-2" style="font-size:0.9rem"><strong>Food is not included with the standard admission ticket.</strong> Food and beverages will be available for purchase from participating vendors. Optional food-credit packages may appear on the ticketing page when offered.</p>
 <p class="mt-2"><a href="../events/bhajan-clubbing.html">Event Details</a> · <a href="faqs.html">Ticket FAQs</a> · <a href="group-booking.html">Group Booking</a> · <a href="../legal/refund.html">Refund Policy</a></p>
 </div>
@@ -1173,7 +1173,7 @@ src="https://maps.google.com/maps?q=585%20Mowry%20Ave%2C%20Fremont%2C%20CA%20945
         page_hero("Ticket FAQs", "Clear answers before you book.", '<a href="../index.html">Home</a> / Tickets / FAQs')
         + f"""
 <section class="section"><div class="container-narrow">
-<details class="faq-item reveal"><summary>Where do I buy tickets?</summary><p>Only through our official link: <a href="{TICKET}" target="_blank" rel="noopener">buytickets.at/rasraaga/2311367</a>.</p></details>
+<details class="faq-item reveal"><summary>Where do I buy tickets?</summary><p>Only through our official link: <a href="{TICKET}" target="_blank" rel="noopener">avenueticket.com/event/bhajan-clubbing-with-ras</a>.</p></details>
 <details class="faq-item reveal"><summary>Are tickets refundable?</summary><p>Please review our <a href="../legal/refund.html">Refund Policy</a>. Policies of the ticketing platform also apply.</p></details>
 <details class="faq-item reveal"><summary>Can I buy tickets at the door?</summary><p>Door availability is not guaranteed. We strongly recommend booking online in advance.</p></details>
 <details class="faq-item reveal"><summary>Do children need tickets?</summary><p>Please follow the age and ticket rules listed on the ticketing page at purchase time.</p></details>
@@ -1664,7 +1664,7 @@ if (new URLSearchParams(location.search).get('subscribed')) {{
         page_hero("Refund Policy", "Clarity with compassion.", '<a href="../index.html">Home</a> / Legal / Refunds')
         + f"""
 <section class="section"><div class="container-narrow prose reveal">
-<p>Ticket refunds and exchanges are subject to the policies displayed at checkout on our ticketing partner (<a href="{TICKET}" target="_blank" rel="noopener">buytickets.at/rasraaga</a>) and applicable law.</p>
+<p>Ticket refunds and exchanges are subject to the policies displayed at checkout on our ticketing partner (<a href="{TICKET}" target="_blank" rel="noopener">avenueticket.com</a>) and applicable law.</p>
 <h2>General guidance</h2>
 <ul>
 <li>Review refund windows carefully before purchasing.</li>
@@ -1721,7 +1721,7 @@ if (new URLSearchParams(location.search).get('subscribed')) {{
 <li>Venue: {VENUE}</li>
 <li>Doors: 4:00 PM · Program: 5:00–8:00 PM</li>
 <li>Artists: BayRaagis</li>
-<li>Tickets: <a href="{TICKET}" target="_blank" rel="noopener">buytickets.at/rasraaga/2311367</a></li>
+<li>Tickets: <a href="{TICKET}" target="_blank" rel="noopener">avenueticket.com/event/bhajan-clubbing-with-ras</a></li>
 <li>Instagram: @rasraaga</li>
 </ul>
 </div>
